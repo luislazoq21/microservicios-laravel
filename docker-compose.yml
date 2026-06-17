@@ -1,0 +1,61 @@
+version: '1'
+
+networks:
+  laravel_network: 
+    driver: bridge
+
+volumes:
+  db_server1_data:
+    driver: local
+  db_server2_data:
+    driver: local
+  db_server3_data:
+    driver: local
+
+services:
+  # Servidor PostgreSQL
+  db_server1:
+    image: postgres:13
+    container_name: db_server1
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_SERVER1_USER}
+      POSTGRES_PASSWORD: ${DB_SERVER1_PASSWORD}
+      POSTGRES_DB: ${DB_SERVER1_NAME}
+    ports:
+      - "${DB_SERVER1_PORT}:5432"
+    volumes:
+      - db_server1_data:/var/lib/postgresql/data
+    networks:
+      - laravel_network
+  
+  # Servicio MongoDB
+  db_server2:
+    image: mongo:latest
+    container_name: db_server2
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_SERVER2_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_SERVER2_PASSWORD}
+    volumes:
+      - db_server2_data:/data/db
+    networks:
+      - laravel_network
+    ports:
+      - "${DB_SERVER2_PORT}:27017"
+
+  #Servicio MySQL
+  db_server3:
+    image: mysql:8.0
+    container_name: db_server3
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_SERVER3_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_SERVER3_NAME}
+      MySQL_PASSWORD: ${DB_SERVER3_PASSWORD}
+    ports:
+      - "${DB_SERVER3_PORT}:3306"
+    volumes:
+      - db_server3_data:/var/lib/mysql
+    networks:
+      - laravel_network
