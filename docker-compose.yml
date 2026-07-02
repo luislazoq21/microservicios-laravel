@@ -59,3 +59,32 @@ services:
       - db_server3_data:/var/lib/mysql
     networks:
       - laravel_network
+
+  # Auth
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: unless-stopped
+    volumes:
+      - ./auth-service:/var/www/html
+    environment:
+      - APP_ENV=local
+      - APP_KEY=base64:sweGDKMGwb7Gtg9McmtfTiCi4I8kTSE2xe2oZqJ0d9s=
+      - APP_DEBUG=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db_server1
+      - DB_PORT=5432
+      - DB_DATABASE=auth_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - JWT_SECRET=Pf9EuhQAX4ziyoSmLuIpl7hbuQJXIXZq9rMDoVS5dbXWw8jaBu4WiJxtlFvQUjZg
+    ports:
+      - "8888:80"
+    depends_on:
+      - db_server1
+    networks:
+      - laravel_network
+
+  # 
